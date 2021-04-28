@@ -4,12 +4,14 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-ENV_FILE=".env"
+SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+ENV_FILE="${SCRIPT_PATH}/.env"
 
 THIS_ENV=$(grep -Ev '^#' "${ENV_FILE}" | xargs)
 
-TEMPLATE_DIR="templates"
-MANIFEST_DIR="manifests"
+TEMPLATE_DIR="${SCRIPT_PATH}/templates"
+MANIFEST_DIR="${SCRIPT_PATH}/manifests"
 TEMPLATE_SUFFIX=".tpl"
 
 # _generate_config $THIS_ENV $TEMPLATE_NAME $CONFIG_NAME
@@ -20,17 +22,29 @@ function _generate_config {
   eval "${THIS_ENV}" envsubst < "${TEMPLATE_NAME}" > "${CONFIG_NAME}"
 }
 
+# _secret $SIZE
+function _secret {
+  local SIZE="${1}"
+  pwgen "${SIZE}" 1
+}
+
+# _encode $TEXT
+function _encode {
+  local TEXT="${1}"
+  echo -n "$(echo -n "${TEXT}" | base64)"
+}
+
+# _apply $MANIFEST
 function _apply {
   local MANIFEST="${1}"
   kubectl apply -f "${MANIFEST}"
 }
 
-DATABASE_USERNAME="postgres"
-DATABASE_PASSWORD=$(echo -n "$(pwgen 16 1)")
+DATABASE_USERNAME=$(_encode "postgres")
+DATABASE_PASSWORD=$(_encode "$(_secret 16)")
+HUGINN_INVITATION_CODE=$(_encode "$(_secret 32)")
 POSTGRES_USER="${DATABASE_USERNAME}"
 POSTGRES_PASSWORD="${DATABASE_PASSWORD}"
-
-HUGINN_INVITATION_CODE=$(echo -n "$(pwgen 32 1)")
 
 THIS_ENV="${THIS_ENV} DATABASE_USERNAME=${DATABASE_USERNAME} DATABASE_PASSWORD=${DATABASE_PASSWORD} POSTGRES_USER=${POSTGRES_USER} POSTGRES_PASSWORD=${POSTGRES_PASSWORD} HUGINN_INVITATION_CODE=${HUGINN_INVITATION_CODE}"
 

@@ -50,6 +50,8 @@ spec:
                 name: huginn-server-config
             - secretRef:
                 name: huginn-server-secret
+            - secretRef:
+                name: huginn-invitation-secret
 
 ---
 apiVersion: v1

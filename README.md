@@ -15,7 +15,7 @@ You need a working k8s cluster and `kubectl` configured.
 
 The DB template uses a storage class named `gp2` in the Kubernetes environment. That's the default storage class in AWS EKS, but can be changed to any other storage class as desired.
 
-You also need `bash` and `envsubst` installed.
+You also need `bash`, `envsubst` and `pwgen` installed.
 
 
 ## Install on Kubernetes
