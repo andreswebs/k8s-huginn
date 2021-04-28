@@ -17,6 +17,13 @@ The DB template uses a storage class named `gp2` in the Kubernetes environment. 
 
 You also need `bash`, `envsubst`, `base64` and `pwgen` installed.
 
+## Configure
+
+Copy the `.env.example` file and fill in the values for your environment:
+
+```sh
+cp .env.example .env
+```
 
 ## Install on Kubernetes
 
