@@ -16,7 +16,7 @@ TEMPLATE_SUFFIX=".tpl"
 
 # _generate_config $THIS_ENV $TEMPLATE_NAME $CONFIG_NAME
 function _generate_config {
-  local ENV_FILE="${1}"
+  local THIS_ENV="${1}"
   local TEMPLATE_NAME="${2}"
   local CONFIG_NAME="${3}"
   eval "${THIS_ENV}" envsubst < "${TEMPLATE_NAME}" > "${CONFIG_NAME}"
